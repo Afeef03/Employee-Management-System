@@ -1,45 +1,8 @@
-# Node modules
+# Node
 node_modules/
+.env
 
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-
-
-# IDE / Editor settings
-.vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage directory (used for tests)
-coverage/
-
-# Build output
+# Build
 dist/
+.next/
 build/
-
-# Debug folders
-.nyc_output/
-
-# Optional npm cache directory
-.npm/
-
-# Local history (in some editors)
-.history/
