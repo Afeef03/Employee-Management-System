@@ -1,25 +1,53 @@
 import axios from "axios";
 import React, { useState } from "react";
-
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"
 
 const SignUp: React.FC = () => {
-  const [fristName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [location, setLocation] = useState("");
+  const [summary, setSummary] = useState("");
+  const [phone, setPhone] = useState("");
 
+  const navigate = useNavigate();
 
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      await axios.post("http://localhost:5500/api/v1/auth/sign-up")
-    } catch (error) {
+      const res = await axios.post("http://localhost:5500/api/v1/auth/sign-up",{
+        name,
+        password,
+        email,
+        phone,
+        summary,
+        location
+      });
+      // console.log(res.data.data.token)
+      const token = res.data.data.token;
 
+      if(token){
+        localStorage.setItem("token",token);
+        toast.success("Signed Up SUccessfully");
+        navigate('/')
+      } else{
+        toast.error("Token not recieved from server")
+      }
+      
+      setEmail("");
+      setLocation("");
+      setName("")
+      setPassword("")
+      setSummary("")
+      setPhone("")
+    } catch (error) {
+      toast.error("Error Signing Up")
     }
-  }
+  };
   return (
     <main className="flex h-screen justify-center items-center">
-      <form className="w-full max-w-lg">
+      <form className="w-full max-w-lg" onSubmit={handleSubmit}>
         <h1 className="text-primary font-bold text-xl my-5">
           Sign Up To Your Account
         </h1>
@@ -35,6 +63,9 @@ const SignUp: React.FC = () => {
               id="first-name"
               type="text"
               placeholder="Afeef"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             />
             <p className="text-red-500 text-xs italic">
@@ -53,6 +84,9 @@ const SignUp: React.FC = () => {
               id="email"
               type="email"
               placeholder="example@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
           </div>
@@ -70,6 +104,9 @@ const SignUp: React.FC = () => {
               id="password"
               type="password"
               placeholder="******************"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
             <p className="text-gray-600 text-xs italic">
@@ -90,11 +127,14 @@ const SignUp: React.FC = () => {
               id="phone"
               type="number"
               placeholder="8688284092"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
           </div>
 
-         <div className="w-full md:w-1/2 px-3">
+          <div className="w-full md:w-1/2 px-3">
             <label
               htmlFor="location"
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -105,10 +145,12 @@ const SignUp: React.FC = () => {
               id="location"
               type="text"
               placeholder="Hyderabad, India"
+              required
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
           </div>
-
         </div>
 
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -122,6 +164,10 @@ const SignUp: React.FC = () => {
             <textarea
               id="summary"
               // type="textarea"
+              required
+
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
               placeholder="Frontend developer improving user interfaces"
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
@@ -136,7 +182,6 @@ const SignUp: React.FC = () => {
             >
               Submit
             </button>
-
           </div>
         </div>
       </form>

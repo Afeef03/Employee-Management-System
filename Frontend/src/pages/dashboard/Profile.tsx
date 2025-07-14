@@ -3,19 +3,28 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Link } from "react-router-dom";
-
-const skills = ["JavaScript", "React", "Node.js", "Python", "SQL"];
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Profile: React.FC = () => {
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const [userData, setUserData] = useState([]);
 
-  // Handle system dark mode toggle on mount
   useEffect(() => {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      document.documentElement.classList.add("dark");
-    }
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`http://localhost:5500/api/v1/users/me`,{
+          headers: {
+            Authorization: `Bearer : ${token}`
+          }
+        });
+        console.log(response)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData()
   }, []);
-
   return (
     <main className="bg-white min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-8 transition-all duration-300 animate-fade-in">
@@ -23,13 +32,11 @@ const Profile: React.FC = () => {
           {/* Left Section */}
           <div className="md:w-1/3 text-center mb-8 md:mb-0">
             <img
-              src="https://i.pravatar.cc/300"
+              src="https://static.vecteezy.com/system/resources/previews/026/619/142/original/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg"
               alt="Profile"
               className="rounded-full w-48 h-48 mx-auto mb-4 border-4 border-primary dark:border-primary transition-transform duration-300 hover:scale-105"
             />
-            <h1 className="text-2xl font-bold text-primarymb-2">
-              John Doe
-            </h1>
+            <h1 className="text-2xl font-bold text-primarymb-2">John Doe</h1>
             <p className="text-gray-600 dark:text-gray-300">
               Software Developer
             </p>
@@ -49,38 +56,19 @@ const Profile: React.FC = () => {
               solving complex problems.
             </p>
 
-            <h2 className="text-xl font-semibold text-indigo-800 dark:text-white mb-4">
-              Skills
-            </h2>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {skills.map((skill) => (
-                <span
-                  key={skill}
-                  className={`px-3 py-1 rounded-full text-sm cursor-default transition-colors duration-200 ${hoveredSkill === skill
-                      ? "bg-blue-900 text-white"
-                      : "bg-indigo-100 text-indigo-800"
-                    }`}
-                  onMouseEnter={() => setHoveredSkill(skill)}
-                  onMouseLeave={() => setHoveredSkill(null)}
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-
             <h2 className="text-xl font-semibold text-indigo-800 mb-4">
               Contact Information
             </h2>
             <ul className="space-y-2 text-gray-700">
-              <li className="flex items-center">
+              <li className="flex items-center gap-3">
                 <EmailIcon />
                 john.doe@example.com
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center gap-3">
                 <PhoneIcon />
                 +1 (555) 123-4567
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center gap-3">
                 <LocationOnIcon />
                 San Francisco, CA
               </li>

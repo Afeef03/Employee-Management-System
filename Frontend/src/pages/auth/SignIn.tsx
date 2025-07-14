@@ -1,22 +1,82 @@
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { Link } from "react-router-dom";
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"
 
 function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
 }
-export default function SignIn() {
 
-  // const []
+export default function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5500/api/v1/auth/sign-in",
+  //       {
+  //         email,
+  //         password,
+  //       }
+  //     );
+  //     console.log(response);
+
+  //     const token = response.data.data.token;
+
+  //     if (token) {
+  //       localStorage.setItem("token", token);
+  //       toast.success("Signed-In Successfully");
+  //       setEmail("");
+  //       setPassword("");
+  //       navigate("/");
+  //     } else {
+  //       toast.error("Token not received from server");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Invalid credentials or server error");
+  //   }
+  // };
+
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:5500/api/v1/auth/sign-in",{
+        email,
+        password
+      })
+      const token =  response.data.data.token;
+
+      if(token){
+        localStorage.setItem("token" , token);
+        toast.success("User signed in successfully");
+        navigate("/");
+      } else{
+        toast.error("token is not recieved");
+      }
+
+      
+    } catch (error) {
+      
+    }
+  }
   return (
     <main className="bg-white grid grid-cols-12 min-h-screen">
       {/* ===============================1st======================Row== */}
       <div className="flex col-span-6 min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         {/* ==================breadcrumbs====================== */}
 
-        <div role="presentation" className="flex justify-center m-2" onClick={handleClick}>
+        <div
+          role="presentation"
+          className="flex justify-center m-2"
+          onClick={handleClick}
+        >
           <Breadcrumbs aria-label="breadcrumb">
             <Link to="/">
               <KeyboardArrowLeftIcon /> Back To Dashboard
@@ -36,7 +96,7 @@ export default function SignIn() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -50,6 +110,8 @@ export default function SignIn() {
                   name="email"
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
@@ -79,6 +141,8 @@ export default function SignIn() {
                   name="password"
                   type="password"
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
@@ -96,13 +160,13 @@ export default function SignIn() {
           </form>
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Not a member?{" "}
-            <a
-              href="#"
+            Didn't have an account?{" "}
+            <Link
+              to="/sign-up"
               className="font-semibold text-indigo-600 hover:text-indigo-500"
             >
-              Start a 14 day free trial
-            </a>
+              Sign Up
+            </Link>
           </p>
         </div>
       </div>

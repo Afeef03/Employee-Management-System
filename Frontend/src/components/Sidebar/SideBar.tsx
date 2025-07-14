@@ -1,12 +1,21 @@
-import { Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import LoginIcon from '@mui/icons-material/Login';
-import LockIcon from '@mui/icons-material/Lock';
-import PeopleIcon from '@mui/icons-material/People';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { Link } from 'react-router-dom';
-import Logo from './Logo';
+import {
+  Drawer,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LoginIcon from "@mui/icons-material/Login";
+import LockIcon from "@mui/icons-material/Lock";
+import PeopleIcon from "@mui/icons-material/People";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Link, useNavigate } from "react-router-dom";
+import Logo from "./Logo";
+import { toast } from "react-toastify";
 
 const drawerWidth = 240;
 
@@ -19,34 +28,34 @@ type SidebarProps = {
 
 const navItems = [
   {
-    title: 'Main  Dashboard',
+    title: "Main Dashboard",
     icon: <DashboardIcon />,
-    navLink: '/',
+    navLink: "/",
   },
   {
-    title: 'All Employess',
+    title: "All Employees",
     icon: <PeopleIcon />,
-    navLink: '/employees',
+    navLink: "/employees",
   },
   {
-    title: 'Profile',
+    title: "Profile",
     icon: <AccountBoxIcon />,
-    navLink: '/profile',
+    navLink: "/profile",
   },
   {
-    title: 'Sign In',
+    title: "Sign In",
     icon: <LoginIcon />,
-    navLink: '/sign-in',
+    navLink: "/sign-in",
   },
   {
-    title: 'Sign Up',
+    title: "Sign Up",
     icon: <LockIcon />,
-    navLink: '/sign-up',
+    navLink: "/sign-up",
   },
   {
-    title: 'Log out',
+    title: "Log out",
     icon: <LogoutIcon />,
-    navLink: '/users',
+    action: "logout",
   },
 ];
 
@@ -56,18 +65,39 @@ export const Sidebar = ({
   container,
   handleDrawerTransitionEnd,
 }: SidebarProps) => {
+  const navigate = useNavigate(); // ✅ Hook inside the component
+
+  const handleLogoutClick = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (confirmed) {
+      localStorage.removeItem("token");
+      toast.success("Logout successful");
+      navigate("/sign-in");
+    }
+  };
+
   const drawer = (
     <div>
       <Logo />
       <Divider />
       <List>
-
         {navItems.map((item) => (
           <ListItem key={item.title} disablePadding>
-            <ListItemButton component={Link} to={item.navLink} onClick={handleDrawerClose}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItemButton>
+            {item.action === "logout" ? (
+              <ListItemButton onClick={handleLogoutClick}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItemButton>
+            ) : (
+              <ListItemButton
+                component={Link}
+                to={item.navLink}
+                onClick={handleDrawerClose}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItemButton>
+            )}
           </ListItem>
         ))}
       </List>
@@ -84,12 +114,12 @@ export const Sidebar = ({
         onTransitionEnd={handleDrawerTransitionEnd}
         onClose={handleDrawerClose}
         sx={{
-          display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
         }}
         slotProps={{
           root: {
-            keepMounted: true, // better mobile performance
+            keepMounted: true,
           },
         }}
       >
@@ -100,8 +130,8 @@ export const Sidebar = ({
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'block' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          display: { xs: "none", sm: "block" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
         }}
         open
       >

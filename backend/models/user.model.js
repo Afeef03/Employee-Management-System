@@ -1,14 +1,5 @@
 import mongoose from "mongoose";
 
-
-//Name
-//password
-//email
-//phone
-//location
-//summary
-//profile image
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String,

@@ -12,6 +12,6 @@ export interface EmployeeType {
   status: string;
 }
 
-export interface BarGraphData{
+export interface UserData{
   
 }
