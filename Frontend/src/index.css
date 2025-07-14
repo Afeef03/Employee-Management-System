@@ -1,0 +1,21 @@
+/* Tailwind base */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lato:ital,wght@0,100;0,300;0,900;1,100;1,300&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #1b2559;
+    --family: "Lato", sans-serif;
+    --color-secondary: #F4F7FE;
+}
+
+/* Custom class */
+.Sidebar-Responsiveness {
+    width: 240px;
+}
+
+/* Media query for mobile (max-width < 640px) */
+@media screen and (max-width: 639px) {
+    .Sidebar-Responsiveness {
+        width: 0 !important;
+    }
+}

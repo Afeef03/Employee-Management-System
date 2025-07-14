@@ -1,0 +1,35 @@
+{
+  "name": "EMS-By-afeef",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "@arcjet/inspect": "^1.0.0-beta.9",
+    "@arcjet/node": "^1.0.0-beta.9",
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^17.1.0",
+    "express": "~4.16.1",
+    "express-fileupload": "^1.5.2",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "js": "^0.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.2",
+    "morgan": "~1.9.1",
+    "multer": "^2.0.1",
+    "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "eslint": "^9.30.1",
+    "globals": "^16.3.0"
+  }
+}
