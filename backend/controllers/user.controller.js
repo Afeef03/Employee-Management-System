@@ -40,3 +40,43 @@ export const getUserData = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const updateUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const {
+            name,
+            email,
+            location,
+            phone,
+            summary
+        } = req.body;
+
+        const updateUser = {}
+        if (name) updateUser.name = name;
+        if (email) updateUser.email = email;
+        if (location) updateUser.location = location
+        if (phone) updateUser.phone = phone
+        if (summary) updateUser.summary = summary
+
+        const updatedUser = await User.findByIdAndUpdate(id, { $set: updateUser },
+            {
+                new: true,
+                runValidators: true,
+            });
+
+        if (!updatedUser) {
+            const error = new Error("User does not exists");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({
+            updateUser
+        })
+
+    } catch (error) {
+        next(error);
+    }
+}

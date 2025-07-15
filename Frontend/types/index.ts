@@ -13,5 +13,15 @@ export interface EmployeeType {
 }
 
 export interface UserData{
-  
+  _id: string,
+  name: string,
+  email: string,
+  location: string,
+  phone: string,
+  summary: string
 }
+export type DecodedToken = {
+  userId: string;
+  exp: number;
+  iat: number;
+};

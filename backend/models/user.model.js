@@ -26,14 +26,18 @@ const userSchema = new mongoose.Schema({
         trim: true,
         maxLength: 1000
     },
-    profileImage: {
-        type: String, 
-        default: "", 
-    },
     role: {
         type: String,
-        enum: ["admin","employee"],
+        enum: ["admin", "employee"],
         default: "employee",
+    },
+    phone: {
+        type: String,
+        required: [true, 'Phone is required']
+    },
+    location: {
+        type: String,
+        required: [true, 'location is required']
     }
 }, { timestamps: true });
 

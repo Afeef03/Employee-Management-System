@@ -45,10 +45,10 @@ export const Topbar = ({ handleDrawerToggle }: TopbarProps) => {
                             .replace(/\b\w/g, (c) => c.toUpperCase())}
                 </Typography>
 
-                <div className='bg-white p-1.5 flex gap-1 items-center rounded-xl shadow-md'>
+                {/* <div className='bg-white p-1.5 flex gap-1 items-center rounded-xl shadow-md'>
                     <input type="text" placeholder='Search' className='bg-secondary p-2 outline-0 rounded-3xl' />
                     <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-                </div>
+                </div> */}
 
             </Toolbar>
         </AppBar>

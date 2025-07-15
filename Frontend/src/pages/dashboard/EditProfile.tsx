@@ -1,57 +1,105 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify"
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-// Name
-// Job Role
-// Status
-// Location
-// Gmail
-// Password
-// Profile Image
-// Summary
-// Department
 const EditProfile: React.FC = () => {
+  const [name, setName] = useState("Afeef")
+  const [email, setEmail] = useState("exmaple@gmail.com")
+  const [location, setLocation] = useState("Hyderabad");
+  const [summary, setSummary] = useState("Summary section")
+  const [phone, setPhone] = useState("9267899261")
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5500/api/v1/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        const userData = response.data.data.user;
+
+        setName(userData.name)
+        setEmail(userData.email)
+        setLocation(userData.location)
+        setSummary(userData.summary)
+        setPhone(userData.phone)
+      } catch (error) {
+        toast.error(error.message)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const submitData = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await axios.put(`http://localhost:5500/api/v1/users/${id}`,{
+        name,
+        email,
+        location,
+        summary,
+        phone
+      })
+
+      console.log(response)
+      toast.success("Employee Updated Successfully")
+      navigate(`/employees/${id}`)
+      // setName('')
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
   return (
     <main className="flex h-screen justify-center items-center">
-      <form className="w-full max-w-lg">
+      <form className="w-full max-w-lg" onSubmit={submitData}>
         <h1 className="text-primary font-bold text-xl my-5">
           Edit Your Profile
         </h1>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
-              htmlFor="first-name"
+              htmlFor="Name"
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             >
-              First Name
+              Name
             </label>
             <input
-              id="first-name"
+              id="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               type="text"
               placeholder="Jane"
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             />
-            <p className="text-red-500 text-xs italic">
-              Please fill out this field.
-            </p>
           </div>
 
           <div className="w-full md:w-1/2 px-3">
             <label
-              htmlFor="last-name"
+              htmlFor="email"
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             >
-              Last Name
+              Email
             </label>
             <input
-              id="last-name"
-              type="text"
-              placeholder="Doe"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@gmail.com"
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap -mx-3 mb-6">
+        {/* <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full px-3">
             <label
               htmlFor="password"
@@ -62,6 +110,8 @@ const EditProfile: React.FC = () => {
             <input
               id="password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="******************"
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
@@ -69,77 +119,39 @@ const EditProfile: React.FC = () => {
               Make it as long and as crazy as you'd like
             </p>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-wrap -mx-3 mb-2">
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+          <div className="w-full md:w-1/2 px-3">
             <label
-              htmlFor="state"
+              htmlFor="email"
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             >
-              Experience Level
-            </label>
-            <div className="relative">
-              <select
-                id="state"
-                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              >
-                <option>Entry Level</option>
-                <option>Junior</option>
-                <option>Senior</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label
-              htmlFor="state"
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            >
-              Job Role
-            </label>
-            <div className="relative">
-              <select
-                id="state"
-                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              >
-                <option>Full-Stack Developer</option>
-                <option>Netsuite Developer</option>
-                <option>Netsuite Functional Developer</option>
-                <option>Devops Engineer</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label
-              htmlFor="zip"
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            >
-              Profile Picture
+              Location
             </label>
             <input
-              id="zip"
-              type="file"
-              placeholder="Profile-Image"
+              id="location"
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Hyderabad,India"
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            />
+          </div>
+
+          <div className="w-full md:w-1/2 px-3">
+            <label
+              htmlFor="email"
+              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            >
+              Phone
+            </label>
+            <input
+              id="phone"
+              type="text"
+              placeholder="9234788751"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
           </div>
@@ -158,6 +170,8 @@ const EditProfile: React.FC = () => {
               type="text"
               placeholder="Frontend developer improving user interfaces"
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
             />
           </div>
         </div>
@@ -166,7 +180,7 @@ const EditProfile: React.FC = () => {
           <div className="w-full">
             <button
               type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded cursor-pointer"
             >
               Edit
             </button>

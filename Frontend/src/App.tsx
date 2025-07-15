@@ -7,9 +7,10 @@ import Profile from "./pages/dashboard/Profile";
 import { Dashboard } from "./pages/dashboard/DashBoard";
 import EditProfile from "./pages/dashboard/EditProfile";
 import AddEmployee from "./components/Dashboard/AddEmployee";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import Employee from "./pages/dashboard/Employee";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import UpdateEmployee from "./pages/dashboard/UpdateEmployee";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -19,21 +20,22 @@ function App() {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
 
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
           }
 
-          >
+        >
           <Route index element={<Dashboard />} />
           <Route path="/employees" element={<Employees />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/edit/:id" element={<EditProfile />} />
           <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/employees/:id" element={<Employee />} />
+          <Route path="/employees/edit/:id" element={<UpdateEmployee />} />
         </Route>
       </Routes>
       <ToastContainer />

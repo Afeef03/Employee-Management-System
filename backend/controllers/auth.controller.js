@@ -10,7 +10,7 @@ export const signUp = async (req, res, next) => {
     session.startTransaction();
 
     try {
-        const { name, email, password, summary, profileImage } = req.body;
+        const { name, email, password, summary, location, phone } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -23,7 +23,7 @@ export const signUp = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUsers = await User.create([
-            { name, email, password: hashedPassword, summary, profileImage }
+            { name, email, password: hashedPassword, summary, location, phone }
         ], { session })
 
         const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN })
@@ -33,7 +33,7 @@ export const signUp = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            message: "USer created successfully",
+            message: "User created successfully",
             data: {
                 token,
                 user: newUsers[0]
@@ -78,7 +78,4 @@ export const signIn = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
-export const signOut = async (req, res, next) => {
-
 }

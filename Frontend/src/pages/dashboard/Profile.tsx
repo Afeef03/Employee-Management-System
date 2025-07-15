@@ -4,27 +4,38 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import type { UserData } from "../../../types";
+import { jwtDecode } from "jwt-decode";
+import type { DecodedToken } from "../../../types";
+
+
 
 const Profile: React.FC = () => {
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState<UserData[]>([]);
+
+  const token = localStorage.getItem("token")
+  const decoded = jwtDecode<DecodedToken>(token);
+  
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token")
-        const response = await axios.get(`http://localhost:5500/api/v1/users/me`,{
+        const response = await axios.get(`http://localhost:5500/api/v1/users/me`, {
           headers: {
-            Authorization: `Bearer : ${token}`
+            Authorization: `Bearer ${token}`
           }
         });
-        console.log(response)
+        const data = response.data.data.user
+        console.log(data);
+        setUserData(data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData()
   }, []);
+
   return (
     <main className="bg-white min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full p-8 transition-all duration-300 animate-fade-in">
@@ -36,12 +47,12 @@ const Profile: React.FC = () => {
               alt="Profile"
               className="rounded-full w-48 h-48 mx-auto mb-4 border-4 border-primary dark:border-primary transition-transform duration-300 hover:scale-105"
             />
-            <h1 className="text-2xl font-bold text-primarymb-2">John Doe</h1>
+            <h1 className="text-2xl font-bold text-primarymb-2">{userData.name ? userData.name : "Name"}</h1>
             <p className="text-gray-600 dark:text-gray-300">
               Software Developer
             </p>
             <button className="mt-4 cursor-pointer bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors duration-300">
-              <Link to={"/edit-profile"}>Edit Profile</Link>
+              <Link to={`/edit/${decoded.userId}`}>Edit Profile</Link>
             </button>
           </div>
 
@@ -51,9 +62,7 @@ const Profile: React.FC = () => {
               About Me
             </h2>
             <p className="text-gray-700 mb-6">
-              Passionate software developer with 5 years of experience in web
-              technologies. I love creating user-friendly applications and
-              solving complex problems.
+              {userData.summary ? userData.summary : 'Summary goes here'}
             </p>
 
             <h2 className="text-xl font-semibold text-indigo-800 mb-4">
@@ -62,15 +71,15 @@ const Profile: React.FC = () => {
             <ul className="space-y-2 text-gray-700">
               <li className="flex items-center gap-3">
                 <EmailIcon />
-                john.doe@example.com
+                {userData.email ? userData.email : "Email goes here"}
               </li>
               <li className="flex items-center gap-3">
                 <PhoneIcon />
-                +1 (555) 123-4567
+                {userData.phone ? userData.phone : "Phone Number Here"}
               </li>
               <li className="flex items-center gap-3">
                 <LocationOnIcon />
-                San Francisco, CA
+                {userData.location ? userData.location : "Location here"}
               </li>
             </ul>
           </div>

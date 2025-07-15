@@ -16,33 +16,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:5500/api/v1/auth/sign-in",
-  //       {
-  //         email,
-  //         password,
-  //       }
-  //     );
-  //     console.log(response);
-
-  //     const token = response.data.data.token;
-
-  //     if (token) {
-  //       localStorage.setItem("token", token);
-  //       toast.success("Signed-In Successfully");
-  //       setEmail("");
-  //       setPassword("");
-  //       navigate("/");
-  //     } else {
-  //       toast.error("Token not received from server");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Invalid credentials or server error");
-  //   }
-  // };
+  
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
@@ -63,7 +37,7 @@ export default function SignIn() {
 
       
     } catch (error) {
-      
+      toast.error(error.message)
     }
   }
   return (
