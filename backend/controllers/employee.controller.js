@@ -64,8 +64,8 @@ export const createEmployee = async (req, res, next) => {
 
     const joiningDate = dateOfJoining ? new Date(dateOfJoining) : todayIST;
 
-
     const existingEmployee = await Employee.findOne({ email }).session(session);
+
     if (existingEmployee) {
       const error = new Error("Employee already exists");
       error.statusCode = 409;
@@ -215,16 +215,13 @@ export const searchEmployee = async (req, res, next) => {
 
 export const getJoiningStats = async (req, res, next) => {
   try {
-    // End of today (UTC)
     const today = new Date();
     today.setUTCHours(23, 59, 59, 999);
 
-    // Start of 6 days ago (UTC)
     const startDate = new Date(today);
     startDate.setUTCDate(today.getUTCDate() - 6);
     startDate.setUTCHours(0, 0, 0, 0);
 
-    // Aggregate based on createdAt field instead of dateOfJoining
     const data = await Employee.aggregate([
       {
         $match: {
@@ -250,7 +247,6 @@ export const getJoiningStats = async (req, res, next) => {
       },
     ]);
 
-    // Fill in missing days with 0 counts
     const result = [];
     for (let i = 0; i < 7; i++) {
       const current = new Date(startDate);
@@ -271,9 +267,19 @@ export const getJoiningStats = async (req, res, next) => {
   }
 };
 
+export const getPieChartStats = async (req, res, next) => {
+  try {
+    const employee = await Employee.aggregate([
+      {
+        $group: {
+          _id: "$department",
+          count: { $sum: 1 }, 
+        },
+      },
+    ]);
 
-
-
-
-
-
+    res.status(200).json(employee);
+  } catch (error) {
+    next(error);
+  }
+};

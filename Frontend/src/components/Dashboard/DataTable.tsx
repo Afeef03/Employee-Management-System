@@ -1,51 +1,60 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import type { EmployeeType } from "../../../types/index";
 import { toast } from "react-toastify";
 
-//accepts value as string and an array of strings
-const EmployeeTable: React.FC<{ filters?: Record<string, string[]> }> = ({ filters = {} }) => {
+const EmployeeTable: React.FC<{ filters?: Record<string, string[]> }> = ({
+  filters = {},
+}) => {
   const [employee, setEmployee] = useState<EmployeeType[]>([]);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchEmployees = async () => {
       try {
         const queryParams = new URLSearchParams();
 
         let convertedToArray = Object.entries(filters);
         convertedToArray.forEach(([key, values]) => {
-          values.forEach(value => {
+          values.forEach((value) => {
             queryParams.append(key, value);
           });
         });
 
-        const hasFilters = Object.values(filters).some(values => values.length > 0);
+        const hasFilters = Object.values(filters).some(
+          (values) => values.length > 0
+        );
 
         const endpoint = hasFilters
           ? `http://localhost:5500/api/v1/employees/search?${queryParams.toString()}`
           : `http://localhost:5500/api/v1/employees/`;
 
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem("token");
         const response = await axios.get(endpoint, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
+          signal: controller.signal,
         });
-        console.log(response)
+        // console.log(response);
         const employees = response.data.data.employees;
         setEmployee(employees);
       } catch (error) {
-        toast.error("Failed to fetch employees");
+        if (error instanceof Error && (error as any).name === "CanceledError") {
+          console.log("Request was cancelled");
+        } else {
+          toast.error("Failed to fetch employees");
+        }
       }
     };
 
     fetchEmployees();
+
+    return () => controller.abort();
   }, [filters]);
 
-
-
-  const deleteEmployee = async (id: string) => {
+  const deleteEmployee = useCallback(async (id: string) => {
     const confirmMessage = window.confirm(
       "Are you sure you want to delete this employee?"
     );
@@ -57,7 +66,7 @@ const EmployeeTable: React.FC<{ filters?: Record<string, string[]> }> = ({ filte
     } catch (error) {
       toast.error("Failed deleting employee");
     }
-  };
+  }, []);
 
   return (
     <div className="overflow-x-auto">
@@ -104,16 +113,17 @@ const EmployeeTable: React.FC<{ filters?: Record<string, string[]> }> = ({ filte
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-semibold ${employee.status === "Active"
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    employee.status === "Active"
                       ? "bg-green-100 text-green-800"
                       : employee.status === "OnLeave"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : employee.status === "Inactive"
-                          ? "bg-gray-200 text-gray-700"
-                          : employee.status === "Left"
-                            ? "bg-red-100 text-red-800"
-                            : ""
-                    }`}
+                      ? "bg-yellow-100 text-yellow-800"
+                      : employee.status === "Inactive"
+                      ? "bg-gray-200 text-gray-700"
+                      : employee.status === "Left"
+                      ? "bg-red-100 text-red-800"
+                      : ""
+                  }`}
                 >
                   {employee.status}
                 </span>
@@ -146,4 +156,4 @@ const EmployeeTable: React.FC<{ filters?: Record<string, string[]> }> = ({ filte
   );
 };
 
-export default EmployeeTable;
+export default React.memo(EmployeeTable);

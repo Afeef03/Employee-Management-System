@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React ,{ useEffect, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -23,7 +23,7 @@ const CustomBarChart = () => {
         const response = await axios.get("http://localhost:5500/api/v1/employees/joining-stats");
         const graphData = response.data.data;
         setData(graphData)
-        console.log(graphData);
+        // console.log(graphData);
       } catch (error) {
         alert(error);
       }
@@ -50,4 +50,4 @@ const CustomBarChart = () => {
   );
 };
 
-export default CustomBarChart;
+export default React.memo(CustomBarChart);

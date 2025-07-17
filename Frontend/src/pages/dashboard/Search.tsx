@@ -151,7 +151,7 @@ const FilterDropdowns: React.FC<{
 
         <button
           type="submit"
-          className="w-full md:w-auto inline-flex justify-center font-medium border border-rose-700 bg-rose-700 rounded px-8 py-2 text-base text-white hover:bg-rose-800"
+          className="w-full md:w-auto inline-flex justify-center font-medium border border-rose-700 bg-rose-700 rounded px-6 py-2 text-base text-white hover:bg-rose-800"
         >
           Apply Filters
         </button>

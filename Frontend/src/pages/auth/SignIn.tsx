@@ -4,52 +4,50 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
-function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-  event.preventDefault();
-  console.info("You clicked a breadcrumb.");
-}
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  
-
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5500/api/v1/auth/sign-in",{
-        email,
-        password
-      })
-      const token =  response.data.data.token;
+      const response = await axios.post(
+        "http://localhost:5500/api/v1/auth/sign-in",
+        {
+          email,
+          password,
+        }
+      );
+      const token = response.data.data.token;
 
-      if(token){
-        localStorage.setItem("token" , token);
+      if (token) {
+        localStorage.setItem("token", token);
         toast.success("User signed in successfully");
         navigate("/");
-      } else{
+      } else {
         toast.error("token is not recieved");
       }
-
-      
-    } catch (error) {
-      toast.error(error.message)
+    } catch (error: unknown) {
+      if(error.response && error.response.status === 404){
+        toast.warning("User Not Found. Please sign up")
+      } else{
+        toast.error("Error signing in")
+      }
     }
-  }
+  };
   return (
     <main className="bg-white grid grid-cols-12 min-h-screen">
       {/* ===============================1st======================Row== */}
-      <div className="flex col-span-6 min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex col-span-12 md:col-span-6 min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         {/* ==================breadcrumbs====================== */}
 
         <div
           role="presentation"
           className="flex justify-center m-2"
-          onClick={handleClick}
         >
           <Breadcrumbs aria-label="breadcrumb">
             <Link to="/">
@@ -59,11 +57,6 @@ export default function SignIn() {
         </div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
-          />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             Sign in to your account
           </h2>
@@ -100,14 +93,7 @@ export default function SignIn() {
                 >
                   Password
                 </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
+                
               </div>
               <div className="mt-2">
                 <input
@@ -146,7 +132,7 @@ export default function SignIn() {
       </div>
 
       {/* =============================2ndRow========================== */}
-      <div className="col-span-6">
+      <div className="md:col-span-6 md:block hidden">
         <img
           src="https://images.unsplash.com/photo-1496917756835-20cb06e75b4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
           alt=""

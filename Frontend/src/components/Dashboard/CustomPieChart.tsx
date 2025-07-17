@@ -1,25 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
+  Tooltip,
+  Legend
 } from 'recharts';
 import type { PieLabelRenderProps } from 'recharts';
+import axios from 'axios';
 
-
-const data = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
-];
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28BFE'];
 const RADIAN = Math.PI / 180;
 
-// Custom label renderer with proper typing
 const renderCustomizedLabel = ({
   cx,
   cy,
@@ -27,49 +20,79 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
-}: PieLabelRenderProps) => {
-  if (cx === undefined || cy === undefined || innerRadius === undefined || outerRadius === undefined || midAngle === undefined || percent === undefined) {
+  name,
+}: PieLabelRenderProps & { name?: string }) => {
+  if (
+    cx === undefined || cy === undefined || innerRadius === undefined ||
+    outerRadius === undefined || midAngle === undefined || percent === undefined
+  ) {
     return null;
   }
 
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const radius = Number(innerRadius) + (Number(outerRadius) - Number(innerRadius)) * 0.5;
+  const x = Number(cx) + radius * Math.cos(-midAngle * RADIAN);
+  const y = Number(cy) + radius * Math.sin(-midAngle * RADIAN);
 
   return (
     <text
       x={x}
       y={y}
-      fill="white"
-      textAnchor={x > cx ? 'start' : 'end'}
+      fill="black"
+      textAnchor={x > Number(cx) ? 'start' : 'end'}
       dominantBaseline="central"
+      fontSize={12}
     >
-      {`${(percent * 100).toFixed(0)}%`}
+      {`${name} (${(percent * 100).toFixed(0)}%)`}
     </text>
   );
 };
 
 const CustomPieChart: React.FC = () => {
+  const [data, setData] = useState<{ name: string; value: number }[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("http://localhost:5500/api/v1/employees/pie-chart");
+
+        const formattedData = res.data.map((item: any) => ({
+          name: item._id,
+          value: item.count,
+        }));
+
+        setData(formattedData);
+      } catch (error) {
+        console.error("Error fetching pie chart data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          labelLine={false}
-          label={renderCustomizedLabel}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="w-full h-[350px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            label={(props) => renderCustomizedLabel({ ...props, name: props.name })}
+            outerRadius={100}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
-export default CustomPieChart;
+export default React.memo(CustomPieChart);

@@ -6,7 +6,8 @@ import {
   updateEmployee,
   deleteEmployee,
   searchEmployee,
-  getJoiningStats
+  getJoiningStats,
+  getPieChartStats
 } from "../controllers/employee.controller.js";
 import { authorize } from "../middlewares/auth.middleware.js";
 
@@ -16,6 +17,7 @@ employeeRouter.get('/search', authorize, searchEmployee);
 
 employeeRouter.get('/', getEmployees);
 employeeRouter.get('/joining-stats', getJoiningStats);
+employeeRouter.get('/pie-chart',getPieChartStats);
 
 employeeRouter.get('/:id', authorize, getEmployee);
 employeeRouter.put('/:id', authorize, updateEmployee);

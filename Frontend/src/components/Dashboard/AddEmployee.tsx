@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from 'react-toastify';
-
+import { toast } from "react-toastify";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const AddEmployee: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [phoneNumber, setphoneNumber] = useState("");
   const [department, setDepartment] = useState("");
   const [designation, setDesignation] = useState("");
@@ -14,15 +14,18 @@ const AddEmployee: React.FC = () => {
   const [dateOfJoining, setdateOfJoining] = useState("");
   const [currentCTC, setcurrentCTC] = useState("");
 
-
-
-  const addEmployee = async () => {
-    if (!firstName || !lastName || !email || !phoneNumber || !department || !designation || !status || !dateOfJoining || !currentCTC) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
+  const addEmployee = async (e: React.FormEvent) => {
+    // if (!firstName || !lastName || !email || !phoneNumber || !department || !designation || !status || !dateOfJoining || !currentCTC) {
+    //   toast.error("Please fill in all fields");
+    //   return;
+    // }
+    e.preventDefault();
     try {
+      const formattedPhone = `+91${phoneNumber}`;
+      if (!isValidPhoneNumber(formattedPhone)) {
+        toast.error("Please enter a valid Indian phone number");
+        return;
+      }
       const employeeInput = {
         firstName,
         lastName,
@@ -32,34 +35,43 @@ const AddEmployee: React.FC = () => {
         designation,
         status,
         dateOfJoining,
-        currentCTC
-      }
-      console.log(employeeInput)
-      await axios.post("http://localhost:5500/api/v1/employees", employeeInput);
-      // console.log(response)
-      toast.success("Employee Added")
+        currentCTC,
+      };
+      console.log(employeeInput);
+      const response = await axios.post(
+        "http://localhost:5500/api/v1/employees",
+        employeeInput
+      );
+      console.log(response);
+      toast.success("Employee Added");
 
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setphoneNumber('');
-      setDepartment('');
-      setDesignation('');
-      setStatus('');
-      setdateOfJoining('');
-      setcurrentCTC('');
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setphoneNumber("");
+      setDepartment("");
+      setDesignation("");
+      setStatus("");
+      setdateOfJoining("");
+      setcurrentCTC("");
+
+      console.log(response.status);
+      if (response.status === 409) {
+        toast.warning("Employee with this email already exists");
+      }
+      // if()
     } catch (error) {
-      toast.error('Submit failed')
-      console.log(error);
+      // toast.error(error.message)
+      if (error.response && error.response.status === 409) {
+        toast.warning("Employee with this email already exists");
+      }
     }
-  }
-  console.log(dateOfJoining)
+  };
+  console.log(dateOfJoining);
   return (
     <main className="flex h-screen justify-center items-center">
-      <form className="w-full max-w-lg">
-        <h1 className="text-primary font-bold text-xl my-5">
-          Add Employee
-        </h1>
+      <form className="w-full max-w-lg" onSubmit={addEmployee}>
+        <h1 className="text-primary font-bold text-xl my-5">Add Employee</h1>
 
         {/* =========================1st-Row=================== */}
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -74,6 +86,7 @@ const AddEmployee: React.FC = () => {
               id="first-name"
               type="text"
               value={firstName}
+              required
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="Jane"
               className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -92,6 +105,7 @@ const AddEmployee: React.FC = () => {
               type="text"
               placeholder="Doe"
               value={lastName}
+              required
               onChange={(e) => setLastName(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
@@ -111,11 +125,11 @@ const AddEmployee: React.FC = () => {
               id="email"
               type="email"
               value={email}
+              required
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@gmail.com"
               className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             />
-
           </div>
 
           <div className="w-full md:w-1/2 px-3">
@@ -130,12 +144,12 @@ const AddEmployee: React.FC = () => {
               type="text"
               placeholder="phoneNumber Number"
               value={phoneNumber}
+              required
               onChange={(e) => setphoneNumber(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             />
           </div>
         </div>
-
 
         {/* ===========================3rd-Row============================= */}
         <div className="flex flex-wrap -mx-3 mb-2">
@@ -152,11 +166,14 @@ const AddEmployee: React.FC = () => {
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
+                required
               >
                 <option value="default">Default</option>
                 <option value="HR">HR</option>
                 <option value="Sales">Sales</option>
-                <option value="Information Technology">Information Technology</option>
+                <option value="Information Technology">
+                  Information Technology
+                </option>
                 <option value="Marketing">Marketing</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -182,11 +199,11 @@ const AddEmployee: React.FC = () => {
               id="designation"
               type="text"
               value={designation}
+              required
               onChange={(e) => setDesignation(e.target.value)}
               placeholder="Full-Stack Developer"
               className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             />
-
           </div>
 
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
@@ -201,6 +218,7 @@ const AddEmployee: React.FC = () => {
                 id="state"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
+                required
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               >
                 <option value="default">Default</option>
@@ -236,10 +254,10 @@ const AddEmployee: React.FC = () => {
               type="date"
               placeholder="01/0802025"
               value={dateOfJoining}
+              required
               onChange={(e) => setdateOfJoining(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
             />
-
           </div>
 
           <div className="w-full md:w-1/2 px-3">
@@ -253,6 +271,7 @@ const AddEmployee: React.FC = () => {
               id="currentCTC"
               type="number"
               placeholder="500000"
+              required
               value={currentCTC}
               onChange={(e) => setcurrentCTC(e.target.value)}
               className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -263,9 +282,9 @@ const AddEmployee: React.FC = () => {
         <div className="flex flex-wrap mb-6">
           <div className="w-full">
             <button
-              type="button"
+              type="submit"
               className="w-full cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded"
-              onClick={addEmployee}
+              // onClick={addEmployee}
             >
               Add Employee
             </button>

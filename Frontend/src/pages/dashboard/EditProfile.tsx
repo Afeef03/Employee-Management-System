@@ -1,62 +1,78 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import { isValidPhoneNumber } from "libphonenumber-js";
 import { useNavigate } from "react-router-dom";
 
 const EditProfile: React.FC = () => {
-  const [name, setName] = useState("Afeef")
-  const [email, setEmail] = useState("exmaple@gmail.com")
+  const [name, setName] = useState("Afeef");
+  const [email, setEmail] = useState("exmaple@gmail.com");
   const [location, setLocation] = useState("Hyderabad");
-  const [summary, setSummary] = useState("Summary section")
-  const [phone, setPhone] = useState("9267899261")
+  const [summary, setSummary] = useState("Summary section");
+  const [phone, setPhone] = useState("9267899261");
 
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5500/api/v1/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const response = await axios.get(
+          "http://localhost:5500/api/v1/users/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        })
+        );
         const userData = response.data.data.user;
 
-        setName(userData.name)
-        setEmail(userData.email)
-        setLocation(userData.location)
-        setSummary(userData.summary)
-        setPhone(userData.phone)
-      } catch (error) {
-        toast.error(error.message)
+        setName(userData.name);
+        setEmail(userData.email);
+        setLocation(userData.location);
+        setSummary(userData.summary);
+        setPhone(userData.phone);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error(String(error));
+        }
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const submitData = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:5500/api/v1/users/${id}`,{
-        name,
-        email,
-        location,
-        summary,
-        phone
-      })
+      const formattedPhone = `+91${phone}`;
+      if (!isValidPhoneNumber(formattedPhone)) {
+        toast.error("Please enter a valid Indian phone number");
+        return;
+      }
+      const response = await axios.put(
+        `http://localhost:5500/api/v1/users/${id}`,
+        {
+          name,
+          email,
+          location,
+          summary,
+          phone,
+        }
+      );
 
-      console.log(response)
-      toast.success("Employee Updated Successfully")
-      navigate(`/employees/${id}`)
+      console.log(response);
+      toast.success("Employee Updated Successfully");
+      navigate(`/profile`);
       // setName('')
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
-  }
+  };
   return (
     <main className="flex h-screen justify-center items-center">
       <form className="w-full max-w-lg" onSubmit={submitData}>

@@ -5,7 +5,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CustomBarChart from '../../components/Dashboard/CustomBarChart';
 import CustomPieChart from '../../components/Dashboard/CustomPieChart';
 import EmployeeTable from '../../components/Dashboard/DataTable';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import type { EmployeeType } from '../../../types';
 
@@ -15,6 +15,8 @@ export const Dashboard = () => {
   const [numberOfEmployees, setNumberOfEmployees] = useState(0);
   const [activeEmployees, setActiveEmployees] = useState(0);
   const [unactiveEmployees, setUnactiveEmployees] = useState(0);
+
+  const filters = useMemo(() => ({}),[]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,7 +46,7 @@ export const Dashboard = () => {
 
 
   return (
-    <main className='grid grid-cols-12 gap-8'>
+    <main className='grid grid-cols-12 gap-6 min-h-screen bg-gray-100 p-4 sm:p-6 overflow-auto'>
       {/* ==================1st Row============= */}
       <div className='sm:col-span-4 col-span-12 bg-white p-3 rounded-xl'>
         <Card title='Total Employees' value={numberOfEmployees} icon={<PeopleOutlineRoundedIcon fontSize='large' />} />
@@ -67,7 +69,7 @@ export const Dashboard = () => {
       {/* ===================3rd Row================ */}
       <div className="col-span-12 p-3 pb-5">
         <h1 className='text-2xl font-semibold text-primary mb-4'>Employee Data</h1>
-        <EmployeeTable />
+        <EmployeeTable filters={filters} />
       </div>
     </main>
   );

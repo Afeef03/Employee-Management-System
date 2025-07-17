@@ -11,10 +11,10 @@ import type { DecodedToken } from "../../../types";
 
 
 const Profile: React.FC = () => {
-  const [userData, setUserData] = useState<UserData[]>([]);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
-  const token = localStorage.getItem("token")
-  const decoded = jwtDecode<DecodedToken>(token);
+  const token = localStorage.getItem("token");
+  const decoded = token ? jwtDecode<DecodedToken>(token) : null;
   
 
 
@@ -27,7 +27,7 @@ const Profile: React.FC = () => {
           }
         });
         const data = response.data.data.user
-        console.log(data);
+        // console.log(data);
         setUserData(data);
       } catch (error) {
         console.log(error);
@@ -47,12 +47,12 @@ const Profile: React.FC = () => {
               alt="Profile"
               className="rounded-full w-48 h-48 mx-auto mb-4 border-4 border-primary dark:border-primary transition-transform duration-300 hover:scale-105"
             />
-            <h1 className="text-2xl font-bold text-primarymb-2">{userData.name ? userData.name : "Name"}</h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <h1 className="text-2xl font-bold text-primarymb-2">{userData?.name ? userData.name : "Name"}</h1>
+            {/* <p className="text-gray-600 dark:text-gray-300">
               Software Developer
-            </p>
+            </p> */}
             <button className="mt-4 cursor-pointer bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition-colors duration-300">
-              <Link to={`/edit/${decoded.userId}`}>Edit Profile</Link>
+              <Link to={decoded ? `/edit/${decoded.userId}` : "#"}>Edit Profile</Link>
             </button>
           </div>
 
@@ -62,7 +62,7 @@ const Profile: React.FC = () => {
               About Me
             </h2>
             <p className="text-gray-700 mb-6">
-              {userData.summary ? userData.summary : 'Summary goes here'}
+              {userData?.summary ? userData.summary : 'Summary goes here'}
             </p>
 
             <h2 className="text-xl font-semibold text-indigo-800 mb-4">
@@ -71,15 +71,15 @@ const Profile: React.FC = () => {
             <ul className="space-y-2 text-gray-700">
               <li className="flex items-center gap-3">
                 <EmailIcon />
-                {userData.email ? userData.email : "Email goes here"}
+                {userData?.email ? userData.email : "Email goes here"}
               </li>
               <li className="flex items-center gap-3">
                 <PhoneIcon />
-                {userData.phone ? userData.phone : "Phone Number Here"}
+                {userData?.phone ? userData.phone : "Phone Number Here"}
               </li>
               <li className="flex items-center gap-3">
                 <LocationOnIcon />
-                {userData.location ? userData.location : "Location here"}
+                {userData?.location ? userData.location : "Location here"}
               </li>
             </ul>
           </div>
