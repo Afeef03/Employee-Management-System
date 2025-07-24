@@ -34,7 +34,7 @@ const navItems = [
   },
   {
     title: "All Employees",
-    icon: <PeopleIcon />,
+    icon: <PeopleIcon color="#c7d2fe"/>,
     navLink: "/employees",
   },
   {

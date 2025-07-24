@@ -1,4 +1,3 @@
-// import { Toolbar, Typography } from '@mui/material';
 import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -16,7 +15,7 @@ export const Dashboard = () => {
   const [activeEmployees, setActiveEmployees] = useState(0);
   const [unactiveEmployees, setUnactiveEmployees] = useState(0);
 
-  const filters = useMemo(() => ({}),[]);
+  const filters = useMemo(() => ({}), []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,28 +45,28 @@ export const Dashboard = () => {
 
 
   return (
-    <main className='grid grid-cols-12 gap-6 min-h-screen bg-gray-100 p-4 sm:p-6 overflow-auto'>
+    <main className='grid grid-cols-12 gap-6 min-h-screen p-4 sm:p-6 overflow-auto'>
       {/* ==================1st Row============= */}
-      <div className='sm:col-span-4 col-span-12 bg-white p-3 rounded-xl'>
+      <div className="sm:col-span-4 col-span-12 bg-white p-4 rounded-xl border border-gray-200 shadow-md transition duration-300 transform hover:-translate-y-2 hover:shadow-xl cursor-pointer">
         <Card title='Total Employees' value={numberOfEmployees} icon={<PeopleOutlineRoundedIcon fontSize='large' />} />
       </div>
-      <div className='sm:col-span-4 bg-white p-3 col-span-12 rounded-md'>
+      <div className="sm:col-span-4 col-span-12 bg-white p-4 rounded-xl border border-gray-200 shadow-md transition duration-300 transform hover:-translate-y-2 hover:shadow-xl cursor-pointer">
         <Card title='Active Employees' value={activeEmployees} icon={<CheckCircleIcon fontSize='large' />} />
       </div>
-      <div className="sm:col-span-4 col-span-12 bg-white p-3 rounded-md">
+      <div className="sm:col-span-4 col-span-12 bg-white p-4 rounded-xl border border-gray-200 shadow-md transition duration-300 transform hover:-translate-y-2 hover:shadow-xl cursor-pointer">
         <Card title='Inactive Employees' value={unactiveEmployees} icon={<RemoveCircleIcon fontSize='large' />} />
       </div>
 
       {/* ===================2nd Row================ */}
-      <div className="sm:col-span-8 col-span-12 bg-white p-3 rounded-md">
+      <div className="sm:col-span-8 col-span-12 bg-white p-3  pt-5 rounded-md border border-gray-200 shadow-xl">
         <CustomBarChart />
       </div>
-      <div className="sm:col-span-4 col-span-12 bg-white p-3 rounded-md">
+      <div className="sm:col-span-4 col-span-12 bg-white p-3 rounded-md border border-gray-200 shadow-xl">
         <CustomPieChart />
       </div>
 
       {/* ===================3rd Row================ */}
-      <div className="col-span-12 p-3 pb-5">
+      <div className="col-span-12 p-5 pb-5 border border-gray-200 bg-white shadow-xl">
         <h1 className='text-2xl font-semibold text-primary mb-4'>Employee Data</h1>
         <EmployeeTable filters={filters} />
       </div>

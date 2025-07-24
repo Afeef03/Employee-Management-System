@@ -15,10 +15,6 @@ const AddEmployee: React.FC = () => {
   const [currentCTC, setcurrentCTC] = useState("");
 
   const addEmployee = async (e: React.FormEvent) => {
-    // if (!firstName || !lastName || !email || !phoneNumber || !department || !designation || !status || !dateOfJoining || !currentCTC) {
-    //   toast.error("Please fill in all fields");
-    //   return;
-    // }
     e.preventDefault();
     try {
       const formattedPhone = `+91${phoneNumber}`;
@@ -35,15 +31,12 @@ const AddEmployee: React.FC = () => {
         designation,
         status,
         dateOfJoining,
-        currentCTC,
-      };
-      console.log(employeeInput);
-      const response = await axios.post(
-        "http://localhost:5500/api/v1/employees",
-        employeeInput
-      );
-      console.log(response);
-      toast.success("Employee Added");
+        currentCTC
+      }
+      console.log(employeeInput)
+      await axios.post("http://localhost:5500/api/v1/employees", employeeInput);
+      // console.log(response)
+      toast.success("Employee Added")
 
       setFirstName("");
       setLastName("");
@@ -67,7 +60,6 @@ const AddEmployee: React.FC = () => {
       }
     }
   };
-  console.log(dateOfJoining);
   return (
     <main className="flex h-screen justify-center items-center">
       <form className="w-full max-w-lg" onSubmit={addEmployee}>
@@ -284,7 +276,7 @@ const AddEmployee: React.FC = () => {
             <button
               type="submit"
               className="w-full cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded"
-              // onClick={addEmployee}
+            // onClick={addEmployee}
             >
               Add Employee
             </button>

@@ -2,20 +2,20 @@ import Employee from "../models/employee.model.js";
 import mongoose from "mongoose";
 
 // GET ALL EMPLOYEES
-export const getEmployees = async (req, res, next) => {
-  try {
-    const employees = await Employee.find();
+// export const getEmployees = async (req, res, next) => {
+//   try {
+//     const employees = await Employee.find();
 
-    res.status(200).json({
-      success: true,
-      data: {
-        employees,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//     res.status(200).json({
+//       success: true,
+//       data: {
+//         employees,
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 // GET ONE EMPLOYEE BY ID
 export const getEmployee = async (req, res, next) => {
@@ -178,40 +178,7 @@ export const deleteEmployee = async (req, res, next) => {
   }
 };
 
-//SEARCH EMPLOYEE
-export const searchEmployee = async (req, res, next) => {
-  try {
-    const { firstName, status, department, designation } = req.query;
 
-    const query = {};
-
-    if (firstName) {
-      query.firstName = { $regex: firstName, $options: "i" };
-    }
-
-    if (status) {
-      query.status = status;
-    }
-
-    if (designation) {
-      query.designation = designation;
-    }
-
-    if (department) {
-      query.department = { $regex: department, $options: "i" };
-    }
-
-    const employees = await Employee.find(query);
-
-    res.status(201).json({
-      data: {
-        employees,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 export const getJoiningStats = async (req, res, next) => {
   try {
@@ -273,12 +240,63 @@ export const getPieChartStats = async (req, res, next) => {
       {
         $group: {
           _id: "$department",
-          count: { $sum: 1 }, 
+          count: { $sum: 1 },
         },
       },
     ]);
 
     res.status(200).json(employee);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addBulkEmployees = async (req, res, next) => {
+  try {
+    const { employees } = req.body;
+
+    if (!employees || !Array.isArray(employees)) {
+      return res.status(400).json({ message: "Invalid Data" })
+    }
+
+    await Employee.insertMany(employees);
+
+    res.status(200).json({
+      message: "Upload successfull"
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getEmployees = async (req, res, next) => {
+  try {
+    const { search = "", status, department, designation } = req.query;
+    const query = {};
+
+    // Search logic
+    if (search) {
+      const regex = new RegExp(search, "i");
+      query.$or = [
+        { firstName: regex },
+        { lastName: regex },
+        { email: regex },
+        { phoneNumber: regex },
+      ];
+    }
+
+    // Filter logic
+    if (status) query.status = status;
+    if (department) query.department = { $regex: department, $options: "i" };
+    if (designation) query.designation = designation;
+
+    const employees = await Employee.find(query);
+
+    res.status(200).json({
+      data: {
+        employees,
+      },
+    });
   } catch (error) {
     next(error);
   }

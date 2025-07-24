@@ -35,7 +35,7 @@ export default function SignIn() {
       if(error.response && error.response.status === 404){
         toast.warning("User Not Found. Please sign up")
       } else{
-        toast.error("Error signing in")
+        toast.error(error.message)
       }
     }
   };

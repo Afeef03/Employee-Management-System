@@ -4,6 +4,7 @@ import { dropdownConfig } from "../../../constant/index";
 const FilterDropdowns: React.FC<{
   onChange: (filters: Record<string, string[]>) => void;
 }> = ({ onChange }) => {
+  
   const [selectedValues, setSelectedValues] = useState<
     Record<string, string[]>
   >({});
@@ -111,11 +112,10 @@ const FilterDropdowns: React.FC<{
                   {getFilteredItems(dropdown).map((item) => (
                     <div
                       key={item.value}
-                      className={`block px-4 py-2 text-gray-700 hover:bg-rose-200 cursor-pointer ${
-                        selectedValues[dropdown.name]?.includes(item.value)
-                          ? "bg-rose-200"
-                          : "bg-white"
-                      }`}
+                      className={`block px-4 py-2 text-gray-700 hover:bg-rose-200 cursor-pointer ${selectedValues[dropdown.name]?.includes(item.value)
+                        ? "bg-rose-200"
+                        : "bg-white"
+                        }`}
                       onClick={() => toggleValue(dropdown.name, item.value)}
                     >
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -151,7 +151,7 @@ const FilterDropdowns: React.FC<{
 
         <button
           type="submit"
-          className="w-full md:w-auto inline-flex justify-center font-medium border border-rose-700 bg-rose-700 rounded px-6 py-2 text-base text-white hover:bg-rose-800"
+          className="w-full md:w-auto inline-flex justify-center font-medium border border-btn bg-btn rounded px-6 py-2 text-base text-white cursor-pointer"
         >
           Apply Filters
         </button>
